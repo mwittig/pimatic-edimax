@@ -1,0 +1,44 @@
+{
+  "name": "pimatic-edimax",
+  "description": "Pimatic Plugin for Edimax WiFi Smart Plugs",
+  "author": {
+    "name": "Marcus Wittig",
+    "url": "https://github.com/mwittig/pimatic-edimax"
+  },
+  "main": "edimax",
+  "files": [
+    "edimax.coffee",
+    "README.md",
+    "edimax-config-schema.coffee",
+    "device-config-schema.coffee",
+    "LICENSE"
+  ],
+  "version": "0.0.1",
+  "homepage": "https://github.com/mwittig/pimatic-edimax",
+  "keywords": [
+    "pimatic",
+    "SmartPlug",
+    "SmartHome",
+    "SmartMeter",
+    "Volkszaehler",
+    "Monitoring"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/mwittig/pimatic-edimax.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mwittig/pimatic-edimax/issues"
+  },
+  "configSchema": "edimax-config-schema.coffee",
+  "dependencies": {
+    "edimax-smartplug": "0.0.2"
+  },
+  "peerDependencies": {
+    "pimatic": ">0.8.19"
+  },
+  "engines": {
+    "node": ">0.8.x",
+    "npm": ">1.1.x"
+  }
+}
