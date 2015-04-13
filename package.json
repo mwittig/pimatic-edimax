@@ -13,7 +13,7 @@
     "device-config-schema.coffee",
     "LICENSE"
   ],
-  "version": "0.0.2",
+  "version": "0.0.3",
   "homepage": "https://github.com/mwittig/pimatic-edimax",
   "keywords": [
     "pimatic",
@@ -32,7 +32,7 @@
   },
   "configSchema": "edimax-config-schema.coffee",
   "dependencies": {
-    "edimax-smartplug": "0.0.3"
+    "edimax-smartplug": "0.0.5"
   },
   "peerDependencies": {
     "pimatic": ">0.8.19"
