@@ -46,3 +46,5 @@ History
 * 20150413, V0.0.3
     * Added support for power metering
     * Updated README
+* 20150413, V0.0.4
+    * Fixed package dependency which caused plugin startup to fail

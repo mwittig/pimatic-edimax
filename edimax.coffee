@@ -2,7 +2,7 @@
 module.exports = (env) ->
   Promise = env.require 'bluebird'
   types = env.require('decl-api').types
-  smartPlug = env.require 'edimax-smartplug'
+  smartPlug = require 'edimax-smartplug'
 
   class EdimaxPlugin extends env.plugins.Plugin
 
