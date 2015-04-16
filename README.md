@@ -10,13 +10,13 @@ You can load the plugin by editing your `config.json` to include the following i
 interval` specifies the time interval in seconds for polling the state information of the Smart Plugs.   
 
     { 
-       "plugin": "interval"
+       "plugin": "edimax"
        "interval": 30
     }
     
 Then you need to add a Smart Plug device in the `devices` section. The plugin offers two device types:
                                                                    
-* EdimaxSmartPlugSimple: This type of device provides basic power switch capabilities. 
+* EdimaxSmartPlugSimple: This type of device provides basic power switching capabilities (ON/OFF). 
 * EdimaxSmartPlug: This type of device additionally provides power metering suitable for Edimax SP-2101W.
 
 As part of the device definition you need to provide the `deviceName` and `password` which have been set using the 
@@ -48,3 +48,14 @@ History
     * Updated README
 * 20150413, V0.0.4
     * Fixed package dependency which caused plugin startup to fail
+* 20150416, V0.0.5
+    * Improved robustness of the Smart Plug model detection. Now using bluebird-retry
+    * Make sure polling is only performed if interval > 0
+    * Allow for re-scheduling of updates if Smart Plug supports metering. This will trigger a new status 
+      update request if changeStateTo() has been called. This way, metering values will be updated right away when the
+      Smart Plug has been switched
+    * Improved attribute change. Now, a change event is triggered only, if a value has actually changed rather than
+      triggering the change event at each interval
+    * Improved error handling. Now, errors will be logged properly.  
+    * Updated to edimax-smartplug@0.0.6
+    * README - fixed some typos

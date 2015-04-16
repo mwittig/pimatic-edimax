@@ -3,6 +3,7 @@ module.exports = (env) ->
   Promise = env.require 'bluebird'
   types = env.require('decl-api').types
   smartPlug = require 'edimax-smartplug'
+  retry = require 'bluebird-retry'
 
   class EdimaxPlugin extends env.plugins.Plugin
 
@@ -35,41 +36,84 @@ module.exports = (env) ->
       }
       @powerMeteringSupported = false
       super()
+      @_state = false;
 
-      smartPlug.getDeviceInfo(@options).then((info) =>
+      setTimeout(=>
+        @_requestModelInfo()
+      , 500
+      )
+
+
+    _requestModelInfo: =>
+      retry(@_modelInfoHandler(@id, @options),
+        {max_tries: -1, max_interval: 30000, interval: 1000, backoff: 2}).done((info) =>
         env.logger.info(@options.name + '@' + @options.host + ': ' + info.vendor +
           " " + info.model + ", fwVersion: " + info.fwVersion + ", deviceId: " + @id)
 
         if info.model is "SP2101W"
           @powerMeteringSupported = true
 
-        # keep updating
-        @requestUpdate()
-        setInterval( =>
-          @requestUpdate()
-        , @interval
-        )
+        @_scheduleUpdate()
       )
 
+    _modelInfoHandler: (id, options)->
+      return () ->
+        return smartPlug.getDeviceInfo(options).catch((error) ->
+          env.logger.error("Unable to get model info of device " + id + ": " + error.toString() + ", Retrying ...")
+          #return Promise.reject error
+          throw error
+        )
+
     # poll device according to interval
-    requestUpdate: ->
+    _scheduleUpdate: () ->
+      if typeof @intervalObject isnt 'undefined'
+        clearInterval(=>
+          @intervalObject
+        )
+
+      # keep updating
+      if @interval > 0
+        @intervalObject = setInterval(=>
+          @_requestUpdate()
+        , @interval
+        )
+
+      # perform an update now
+      @_requestUpdate()
+
+    _requestUpdate: ->
+      id = @id
       smartPlug.getStatusValues(@powerMeteringSupported, @options).then((values) =>
         if values.state isnt @_state
           @_setState(values.state)
 
         if @powerMeteringSupported
           @emit "meteringData", values
+      ).catch((error) ->
+        env.logger.error("Unable to get status values of device " + id + ": " + error.toString())
       )
 
     getState: () ->
+      if @_state?
+        return Promise.resolve @_state
+
+      id = @id
       return smartPlug.getSwitchState(@options).then((switchState) =>
         @_state = switchState
         return Promise.resolve @_state
+      ).catch((error) ->
+        env.logger.error("Unable to get switch state of device " + id + ": " + error.toString())
       )
 
     changeStateTo: (state) ->
+      id = @id
       return smartPlug.setSwitchState(state, @options).then(() =>
         @_setState(state)
+        if @powerMeteringSupported
+          @_scheduleUpdate()
+        return Promise.resolve()
+      ).catch((error) ->
+        env.logger.error("Unable to change switch state of device " + id + ": " + error.toString())
       )
 
   class EdimaxSmartPlug extends EdimaxSmartPlugSimple
@@ -113,19 +157,25 @@ module.exports = (env) ->
 
     constructor: (@config, @plugin) ->
       @on 'meteringData', ((values) ->
-        @emit "energyToday", values.day
-        @emit "energyWeek", values.week
-        @emit "energyMonth", values.month
-        @emit "currentPower", values.nowPower
-        @emit "currentAmperage", values.nowCurrent
+        @_setAttribute('energyToday', values.day)
+        @_setAttribute('energyWeek', values.week)
+        @_setAttribute('energyMonth', values.month)
+        @_setAttribute('currentPower', values.nowPower)
+        @_setAttribute('currentAmperage', values.nowCurrent)
       )
       super(@config, @plugin)
+
+    _setAttribute: (attributeName, value) ->
+      if @[attributeName] isnt value
+        @[attributeName] = value
+        @emit attributeName, value
 
     getEnergyToday: -> Promise.resolve @energyToday
     getEnergyWeek: -> Promise.resolve @energyWeek
     getEnergyMonth: -> Promise.resolve @energyMonth
     getCurrentPower: -> Promise.resolve @currentPower
     getCurrentAmperage: -> Promise.resolve @currentAmperage
+
 
   # ###Finally
   # Create a instance of my plugin
