@@ -1,6 +1,8 @@
 pimatic-edimax
 =================
 
+[![npm version](https://badge.fury.io/js/pimatic-edimax.svg)](http://badge.fury.io/js/pimatic-edimax)
+
 Pimatic Plugin for Edimax WiFi Smart Plugs.
 
 Configuration
@@ -59,3 +61,5 @@ History
     * Improved error handling. Now, errors will be logged properly.  
     * Updated to edimax-smartplug@0.0.6
     * README - fixed some typos
+* 201504XX, V0.0.6
+    * Added licenses property to package.json

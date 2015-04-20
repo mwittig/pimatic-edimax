@@ -13,13 +13,13 @@ module.exports = (env) ->
       @framework.deviceManager.registerDeviceClass("EdimaxSmartPlugSimple", {
         configDef: deviceConfigDef.EdimaxSmartPlugSimple,
         createCallback: (config) =>
-          new EdimaxSmartPlugSimple(config, this)
+          new EdimaxSmartPlugSimple(config, @)
       })
 
       @framework.deviceManager.registerDeviceClass("EdimaxSmartPlug", {
         configDef: deviceConfigDef.EdimaxSmartPlug,
         createCallback: (config) =>
-          new EdimaxSmartPlug(config, this)
+          new EdimaxSmartPlug(config, @)
       })
 
 
