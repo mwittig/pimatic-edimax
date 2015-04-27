@@ -5,7 +5,7 @@ pimatic-edimax
 
 Pimatic Plugin for Edimax WiFi Smart Plugs.
 
-![screenshot](https://raw.githubusercontent.com/mwittig/pimatic-edimax/master/screenshot-1.png)]
+![screenshot](https://raw.githubusercontent.com/mwittig/pimatic-edimax/master/screenshot-1.png)
 
 Configuration
 -------------
