@@ -5,6 +5,8 @@ pimatic-edimax
 
 Pimatic Plugin for Edimax WiFi Smart Plugs.
 
+![screenshot](https://raw.githubusercontent.com/mwittig/pimatic-edimax/master/screenshot-1.png)]
+
 Configuration
 -------------
 
@@ -61,4 +63,7 @@ History
     * Improved error handling. Now, errors will be logged properly.  
     * Updated to edimax-smartplug@0.0.6
     * README - fixed some typos
-
+* 20150427, V0.0.6
+    * Fixed description of attribute state 
+    * Updated bluebird-retry to 0.0.4
+    * Added screenshot

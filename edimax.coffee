@@ -120,7 +120,7 @@ module.exports = (env) ->
     # attributes
     attributes:
       state:
-        description: "Current state of the guest wlan"
+        description: "Current State"
         type: types.boolean
         labels: ['on', 'off']
       energyToday:
