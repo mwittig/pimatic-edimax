@@ -5,6 +5,11 @@ pimatic-edimax
 
 Pimatic Plugin for Edimax WiFi Smart Plugs.
 
+Screenshot
+-------------
+
+Example of the device display as provided by the EdimaxSmartPlug
+
 ![screenshot](https://raw.githubusercontent.com/mwittig/pimatic-edimax/master/screenshot-1.png)
 
 Configuration
@@ -33,7 +38,61 @@ EdiPlug app provided by Edimax. Note, the `deviceName` refers to the `Name` fiel
       "deviceName": "edimax",
       "host": "192.168.178.65",
       "password": "1234"
-    }   
+    }
+       
+Advanced Configuration
+-------------
+
+### Recover State
+    
+In my opinion Edimax Smart Plugs lack an essential feature, namely they do not fully recover their last state after a 
+power failure. Say, the switch had been turned ON and you have power outage for a few minutes (you can simulate this by 
+pulling the smart plug and plugging to the mains socket again). In this case, the smart plug will remain OFF. How bad 
+is this! To deal with this issue the `recoverState` feature (deactivated by default) has been added to automatically 
+recover the state after a failure or pimatic has been started. Be warned, however: *Don't plug critical devices such 
+as a freezer to the smart plug!* To enable the `recoverState` feature you need to set the property to true as 
+shown below:
+
+    {
+      "id": "sp1",
+      "class": "EdimaxSmartPlug",
+      "name": "Schaltsteckdose",
+      "deviceName": "edimax",
+      "host": "192.168.178.65",
+      "password": "1234",
+      "recoverState": true
+    }
+
+### xLink and xAttributeOptions properties
+
+If you wish to hide the sparkline (the mini-graph) of the attribute display or even hide an attributed this is possible 
+ with pimatic v0.8.68 and higher using the `xAttributeOptions` property as shown in the following example. Using the 
+ `xLink` property you can also add a hyperlink to the device display.
+ 
+    {
+        "id": "sp1",
+        "class": "EdimaxSmartPlug",
+        "name": "Schaltsteckdose",
+        "deviceName": "edimax",
+        "host": "192.168.178.65",
+        "password": "1234",
+        "recoverState": true
+        "xLink": "http://fritz.box",
+        "xAttributeOptions": [
+            {
+                "name": "energyToday",
+                "displaySparkline": false
+            },
+            {
+                "name": "energyWeek",
+                "displaySparkline": false
+            },
+            {
+                "name": "energyMonth",
+                "hidden": true
+            }
+        ]
+    }
     
 TODO
 ----
@@ -56,7 +115,7 @@ History
     * Improved robustness of the Smart Plug model detection. Now using bluebird-retry
     * Make sure polling is only performed if interval > 0
     * Allow for re-scheduling of updates if Smart Plug supports metering. This will trigger a new status 
-      update request if changeStateTo() has been called. This way, metering values will be updated right away when the
+      update request if `changeStateTo()` has been called. This way, metering values will be updated right away when the
       Smart Plug has been switched
     * Improved attribute change. Now, a change event is triggered only, if a value has actually changed rather than
       triggering the change event at each interval
@@ -67,3 +126,9 @@ History
     * Fixed description of attribute state 
     * Updated bluebird-retry to 0.0.4
     * Added screenshot
+* 20150502, V0.0.7
+    * Added `xOnLabel`, `xOffLabel`, `xLink`, and `xAttributeOptions` extensions as part of the device configuration
+    * Added `recoverState` feature
+    * Energy values are now read from DB on plugin initialization
+    * Reduced error log output. If `debug` is not set on the plugin, only new error states will be logged
+    * Documentation of new features, added section on "Advanced Configuration" to README

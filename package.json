@@ -13,7 +13,7 @@
     "device-config-schema.coffee",
     "LICENSE"
   ],
-  "version": "0.0.6",
+  "version": "0.0.7",
   "homepage": "https://github.com/mwittig/pimatic-edimax",
   "keywords": [
     "pimatic",

@@ -4,7 +4,7 @@ module.exports = {
     title: "Edimax Smart Plug"
     description: "A WiFi Smart Plug which can be switched on and off."
     type: "object"
-    extensions: ["xConfirm"]
+    extensions: ["xConfirm", "xOnLabel", "xOffLabel", "xLink"]
     properties:
       deviceName:
         description: "The name of the Smart Plug as shown by the EdiPlug configuration app"
@@ -24,12 +24,16 @@ module.exports = {
         description: "Polling interval for switch state in seconds"
         type: "number"
         default: 0
+      recoverState:
+        description: "If true, recover switch state from database on startup and after failure"
+        type: "boolean"
+        default: false
   }
   EdimaxSmartPlug: {
     title: "Edimax Smart Plug with Power Metering"
     description: "A WiFi Smart Plug which can be switched on and off and provides power metering."
     type: "object"
-    extensions: ["xConfirm"]
+    extensions: ["xConfirm", "xOnLabel", "xOffLabel", "xLink", "xAttributeOptions"]
     properties:
       deviceName:
         description: "The name of the Smart Plug as shown by the EdiPlug configuration app"
@@ -49,5 +53,9 @@ module.exports = {
         description: "Polling interval for switch state in seconds"
         type: "number"
         default: 0
+      recoverState:
+        description: "If true, recover switch state from database on startup and after failure"
+        type: "boolean"
+        default: false
   }
 }

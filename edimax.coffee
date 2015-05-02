@@ -12,19 +12,19 @@ module.exports = (env) ->
 
       @framework.deviceManager.registerDeviceClass("EdimaxSmartPlugSimple", {
         configDef: deviceConfigDef.EdimaxSmartPlugSimple,
-        createCallback: (config) =>
-          new EdimaxSmartPlugSimple(config, @)
+        createCallback: (config, lastState) =>
+          new EdimaxSmartPlugSimple(config, @, lastState)
       })
 
       @framework.deviceManager.registerDeviceClass("EdimaxSmartPlug", {
         configDef: deviceConfigDef.EdimaxSmartPlug,
-        createCallback: (config) =>
-          new EdimaxSmartPlug(config, @)
+        createCallback: (config, lastState) =>
+          new EdimaxSmartPlug(config, @, lastState)
       })
 
 
   class EdimaxSmartPlugSimple extends env.devices.PowerSwitch
-    constructor: (@config, @plugin) ->
+    constructor: (@config, @plugin, lastState) ->
       @name = config.name
       @id = config.id
       @interval = 1000 * (config.interval or plugin.config.interval)
@@ -35,8 +35,11 @@ module.exports = (env) ->
         password: config.password
       }
       @powerMeteringSupported = false
+      @recoverState = config.recoverState
+
       super()
-      @_state = false;
+      @_state = lastState?.state?.value or false;
+      @_lastError = "INIT"
 
       setTimeout(=>
         @_requestModelInfo()
@@ -84,14 +87,22 @@ module.exports = (env) ->
     _requestUpdate: ->
       id = @id
       smartPlug.getStatusValues(@powerMeteringSupported, @options).then((values) =>
-        if values.state isnt @_state
-          @_setState(values.state)
+        if @_lastError isnt "" and @recoverState
+          @changeStateTo @_state
+        else
+          if values.state isnt @_state
+            @_setState(values.state)
+
+        @_lastError = ""
 
         if @powerMeteringSupported
           @emit "meteringData", values
-      ).catch((error) ->
-        env.logger.error("Unable to get status values of device " + id + ": " + error.toString())
+      ).catch((error) =>
+        newError = "Unable to get status values of device " + id + ": " + error.toString()
+        env.logger.error newError if @_lastError isnt newError or @debug
+        @_lastError = newError
       )
+
 
     getState: () ->
       if @_state?
@@ -149,13 +160,14 @@ module.exports = (env) ->
         unit: 'A'
         acronym: 'AAC'
 
-    energyToday: 0.0
-    energyWeek: 0.0
-    energyMonth: 0.0
-    currentPower: 0.0
-    currentAmperage: 0.0
+    energyToday: lastState?.energyToday?.value or 0.0;
+    energyWeek: lastState?.energyWeek?.value or 0.0;
+    energyMonth: lastState?.energyMonth?.value or 0.0;
+    # it does not make much sense to recover current power and amperage from DB values
+    currentPower: 0.0;
+    currentAmperage: 0.0;
 
-    constructor: (@config, @plugin) ->
+    constructor: (@config, @plugin, lastState) ->
       @on 'meteringData', ((values) ->
         @_setAttribute('energyToday', values.day)
         @_setAttribute('energyWeek', values.week)
@@ -163,7 +175,7 @@ module.exports = (env) ->
         @_setAttribute('currentPower', values.nowPower)
         @_setAttribute('currentAmperage', values.nowCurrent)
       )
-      super(@config, @plugin)
+      super(@config, @plugin, lastState)
 
     _setAttribute: (attributeName, value) ->
       if @[attributeName] isnt value
