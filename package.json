@@ -11,9 +11,10 @@
     "README.md",
     "edimax-config-schema.coffee",
     "device-config-schema.coffee",
-    "LICENSE"
+    "LICENSE",
+    "screenshot-1.png"
   ],
-  "version": "0.0.7",
+  "version": "0.0.8",
   "homepage": "https://github.com/mwittig/pimatic-edimax",
   "keywords": [
     "pimatic",
@@ -39,7 +40,7 @@
   "configSchema": "edimax-config-schema.coffee",
   "dependencies": {
     "bluebird-retry": ">=0.4.0",
-    "edimax-smartplug": "0.0.6"
+    "edimax-smartplug": ">=0.0.7"
   },
   "peerDependencies": {
     "pimatic": ">0.8.19"

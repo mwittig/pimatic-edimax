@@ -47,7 +47,7 @@ Advanced Configuration
     
 In my opinion Edimax Smart Plugs lack an essential feature, namely they do not fully recover their last state after a 
 power failure. Say, the switch had been turned ON and you have power outage for a few minutes (you can simulate this by 
-pulling the smart plug and plugging to the mains socket again). In this case, the smart plug will remain OFF. How bad 
+pulling the smart plug and plugging it to the mains socket again). In this case, the smart plug will remain OFF. How bad 
 is this! To deal with this issue the `recoverState` feature (deactivated by default) has been added to automatically 
 recover the state after a failure or pimatic has been started. Be warned, however: *Don't plug critical devices such 
 as a freezer to the smart plug!* To enable the `recoverState` feature you need to set the property to true as 
@@ -127,8 +127,12 @@ History
     * Updated bluebird-retry to 0.0.4
     * Added screenshot
 * 20150502, V0.0.7
-    * Added `xOnLabel`, `xOffLabel`, `xLink`, and `xAttributeOptions` extensions as part of the device configuration
+    * Added support for `xOnLabel`, `xOffLabel`, `xLink`, and `xAttributeOptions` extensions as part of the device 
+      configuration
     * Added `recoverState` feature
     * Energy values are now read from DB on plugin initialization
     * Reduced error log output. If `debug` is not set on the plugin, only new error states will be logged
     * Documentation of new features, added section on "Advanced Configuration" to README
+* 20150508, V0.0.8
+    * Fixed bug which caused blocking requests if smart plug not reachable
+    * Updated dependencies
