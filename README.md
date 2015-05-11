@@ -136,3 +136,6 @@ History
 * 20150508, V0.0.8
     * Fixed bug which caused blocking requests if smart plug not reachable
     * Updated dependencies
+* 20150511, V0.0.9    
+    * Updated package edimax-smartplug to enforce a default timeout of 20000 msecs to cleanup properly if 
+      client is connected but server does not send a response.
