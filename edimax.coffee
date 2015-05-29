@@ -27,12 +27,14 @@ module.exports = (env) ->
     constructor: (@config, @plugin, lastState) ->
       @name = config.name
       @id = config.id
-      @interval = 1000 * (config.interval or plugin.config.interval)
+      @interval = 1000 * @_normalize (config.interval or plugin.config.interval), 10, 86400
       @options = {
+        timeout: Math.min @interval, 20000
         name: config.deviceName || config.name,
         host: config.host,
         username: config.username,
-        password: config.password
+        password: config.password,
+        agent: false
       }
       @powerMeteringSupported = false
       @recoverState = config.recoverState
@@ -60,9 +62,11 @@ module.exports = (env) ->
       )
 
     _modelInfoHandler: (id, options)->
-      return () ->
-        return smartPlug.getDeviceInfo(options).catch((error) ->
-          env.logger.error("Unable to get model info of device " + id + ": " + error.toString() + ", Retrying ...")
+      return () =>
+        return smartPlug.getDeviceInfo(options).catch((error) =>
+          newError = "Unable to get model info of device " + id + ": " + error.toString() + ", Retrying ..."
+          env.logger.error(newError) if @_lastError isnt newError or @debug
+          @_lastError = newError
           #return Promise.reject error
           throw error
         )
@@ -103,6 +107,16 @@ module.exports = (env) ->
         @_lastError = newError
       )
 
+    _normalize: (value, lowerRange, upperRange) ->
+      if upperRange
+        return Math.min (Math.max value, lowerRange), upperRange
+      else
+        return Math.max value lowerRange
+
+    _setAttribute: (attributeName, value) ->
+      if @[attributeName] isnt value
+        @[attributeName] = value
+        @emit attributeName, value
 
     getState: () ->
       if @_state?
@@ -176,11 +190,6 @@ module.exports = (env) ->
         @_setAttribute('currentAmperage', values.nowCurrent)
       )
       super(@config, @plugin, lastState)
-
-    _setAttribute: (attributeName, value) ->
-      if @[attributeName] isnt value
-        @[attributeName] = value
-        @emit attributeName, value
 
     getEnergyToday: -> Promise.resolve @energyToday
     getEnergyWeek: -> Promise.resolve @energyWeek

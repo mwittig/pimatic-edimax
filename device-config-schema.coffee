@@ -21,7 +21,7 @@ module.exports = {
         type: "string"
         default: "1234"
       interval:
-        description: "Polling interval for switch state in seconds"
+        description: "Polling interval for switch state in seconds, value range [10-86400] or 0 to use plugin setting"
         type: "number"
         default: 0
       recoverState:
@@ -50,7 +50,7 @@ module.exports = {
         type: "string"
         default: "1234"
       interval:
-        description: "Polling interval for switch state in seconds"
+        description: "Polling interval for switch state in seconds, value range [10-86400] or 0 to use plugin setting"
         type: "number"
         default: 0
       recoverState:

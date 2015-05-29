@@ -3,7 +3,7 @@ module.exports = {
   type: "object"
   properties:
     interval:
-      description: "Polling interval for switch state in seconds"
+      description: "Polling interval for switch state in seconds, value range [10-86400] or 0 to use device setting"
       type: "number"
       default: 60
     debug:

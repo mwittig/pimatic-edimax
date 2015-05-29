@@ -139,3 +139,8 @@ History
 * 20150511, V0.0.9    
     * Updated package edimax-smartplug to enforce a default timeout of 20000 msecs to cleanup properly if 
       client is connected but server does not send a response.
+* 20150529, V0.1.0
+    * Added range checks for interval property. Update device and config schema
+    * Adapt timeout to interval if interval is less than 20 secs
+    * Disabled socket pooling
+    
