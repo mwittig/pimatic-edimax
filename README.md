@@ -143,4 +143,7 @@ History
     * Added range checks for interval property. Update device and config schema
     * Adapt timeout to interval if interval is less than 20 secs
     * Disabled socket pooling
-    
+* 20150820, V0.2.0
+    * Revised license information to provide a SPDX 2.0 license identifier as required by npm v2.1 guidelines on 
+      license metadata - see also https://github.com/npm/npm/releases/tag/v2.10.0
+    * Updated dependencies

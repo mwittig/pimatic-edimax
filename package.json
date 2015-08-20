@@ -31,15 +31,10 @@
   "bugs": {
     "url": "https://github.com/mwittig/pimatic-edimax/issues"
   },
-  "licenses": [
-    {
-      "type": "GPLv2",
-      "url": "https://github.com/mwittig/pimatic-edimax/blob/master/LICENSE"
-    }
-  ],
+  "license": "GPL-2.0",
   "configSchema": "edimax-config-schema.coffee",
   "dependencies": {
-    "bluebird-retry": ">=0.4.0",
+    "bluebird-retry": ">=0.5.0",
     "edimax-smartplug": ">=0.0.8"
   },
   "peerDependencies": {
