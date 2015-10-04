@@ -27,9 +27,10 @@ module.exports = (env) ->
     constructor: (@config, @plugin, lastState) ->
       @name = config.name
       @id = config.id
-      @interval = 1000 * @_normalize (config.interval or plugin.config.interval), 10, 86400
+      intervalSeconds = (config.interval or (plugin.config.interval ? plugin.config.__proto__.interval))
+      @interval = 1000 * @_normalize intervalSeconds, 10, 86400
       @options = {
-        timeout: Math.min @interval, 20000
+        timeout: Math.min @interval, 10000
         name: config.deviceName || config.name,
         host: config.host,
         username: config.username,
@@ -138,7 +139,9 @@ module.exports = (env) ->
           @_scheduleUpdate()
         return Promise.resolve()
       ).catch((error) ->
-        env.logger.error("Unable to change switch state of device " + id + ": " + error.toString())
+        errorMessage = "Unable to change switch state of device " + id + ": " + error.toString()
+        env.logger.error errorMessage
+        return Promise.reject errorMessage
       )
 
   class EdimaxSmartPlug extends EdimaxSmartPlugSimple
