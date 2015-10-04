@@ -147,3 +147,6 @@ History
     * Revised license information to provide a SPDX 2.0 license identifier as required by npm v2.1 guidelines on 
       license metadata - see also https://github.com/npm/npm/releases/tag/v2.10.0
     * Updated dependencies
+* 20151004, V0.3.0
+    * Fixed handling of plugin configuration default for interval
+    * Fixed error handling of changeStateTo action. Return a rejected Promise with error message on error
