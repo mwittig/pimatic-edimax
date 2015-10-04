@@ -23,7 +23,6 @@ module.exports = {
       interval:
         description: "Polling interval for switch state in seconds, value range [10-86400] or 0 to use plugin setting"
         type: "number"
-        default: 0
       recoverState:
         description: "If true, recover switch state from database on startup and after failure"
         type: "boolean"
