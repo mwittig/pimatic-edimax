@@ -2,13 +2,15 @@
 module.exports = (env) ->
   Promise = env.require 'bluebird'
   types = env.require('decl-api').types
-  smartPlug = require 'edimax-smartplug'
   retry = require 'bluebird-retry'
-
+  commons = require('pimatic-plugin-commons')(env)
+  
   class EdimaxPlugin extends env.plugins.Plugin
 
     init: (app, @framework, @config) =>
       deviceConfigDef = require("./device-config-schema")
+      if config.debug
+        process.env.EDIMAX_DEBUG=true
 
       @framework.deviceManager.registerDeviceClass("EdimaxSmartPlugSimple", {
         configDef: deviceConfigDef.EdimaxSmartPlugSimple,
@@ -27,8 +29,13 @@ module.exports = (env) ->
     constructor: (@config, @plugin, lastState) ->
       @name = config.name
       @id = config.id
+      @debug = plugin.config.debug ? false
+      @base = commons.base @, config.class
+      @smartPlug = require 'edimax-smartplug'
+
+
       intervalSeconds = (config.interval or (plugin.config.interval ? plugin.config.__proto__.interval))
-      @interval = 1000 * @_normalize intervalSeconds, 10, 86400
+      @interval = 1000 * @base.normalize intervalSeconds, 10, 86400
       @options = {
         timeout: Math.min @interval, 10000
         name: config.deviceName || config.name,
@@ -42,7 +49,7 @@ module.exports = (env) ->
 
       super()
       @_state = lastState?.state?.value or false;
-      @_lastError = "INIT"
+      @__lastError = "INIT"
 
       setTimeout(=>
         @_requestModelInfo()
@@ -64,10 +71,8 @@ module.exports = (env) ->
 
     _modelInfoHandler: (id, options)->
       return () =>
-        return smartPlug.getDeviceInfo(options).catch((error) =>
-          newError = "Unable to get model info of device " + id + ": " + error.toString() + ", Retrying ..."
-          env.logger.error(newError) if @_lastError isnt newError or @debug
-          @_lastError = newError
+        return @smartPlug.getDeviceInfo(options).catch((error) =>
+          @base.error "Unable to get model info of device: " + error.toString() + ", Retrying ..."
           #return Promise.reject error
           throw error
         )
@@ -91,57 +96,43 @@ module.exports = (env) ->
 
     _requestUpdate: ->
       id = @id
-      smartPlug.getStatusValues(@powerMeteringSupported, @options).then((values) =>
-        if @_lastError isnt "" and @recoverState
+      @smartPlug.getStatusValues(@powerMeteringSupported, @options).then((values) =>
+        if @__lastError isnt "" and @recoverState
           @changeStateTo @_state
         else
           if values.state isnt @_state
             @_setState(values.state)
 
-        @_lastError = ""
+        @base.resetLastError()
 
         if @powerMeteringSupported
           @emit "meteringData", values
       ).catch((error) =>
-        newError = "Unable to get status values of device " + id + ": " + error.toString()
-        env.logger.error newError if @_lastError isnt newError or @debug
-        @_lastError = newError
+        @base.error "Unable to get status values of device: " + error.toString()
       )
-
-    _normalize: (value, lowerRange, upperRange) ->
-      if upperRange
-        return Math.min (Math.max value, lowerRange), upperRange
-      else
-        return Math.max value lowerRange
-
-    _setAttribute: (attributeName, value) ->
-      if @[attributeName] isnt value
-        @[attributeName] = value
-        @emit attributeName, value
 
     getState: () ->
       if @_state?
         return Promise.resolve @_state
 
       id = @id
-      return smartPlug.getSwitchState(@options).then((switchState) =>
+      return @smartPlug.getSwitchState(@options).then((switchState) =>
         @_state = switchState
         return Promise.resolve @_state
-      ).catch((error) ->
-        env.logger.error("Unable to get switch state of device " + id + ": " + error.toString())
+      ).catch((error) =>
+        @base.error "Unable to get switch state of device: " + error.toString()
       )
 
     changeStateTo: (state) ->
       id = @id
-      return smartPlug.setSwitchState(state, @options).then(() =>
+      return @smartPlug.setSwitchState(state, @options).then(() =>
         @_setState(state)
         if @powerMeteringSupported
           @_scheduleUpdate()
         return Promise.resolve()
-      ).catch((error) ->
-        errorMessage = "Unable to change switch state of device " + id + ": " + error.toString()
-        env.logger.error errorMessage
-        return Promise.reject errorMessage
+      ).catch((error) =>
+        errorMessage = "Unable to change switch state of device: " + error.toString()
+        @base.rejectWithError Promise.reject, errorMessage
       )
 
   class EdimaxSmartPlug extends EdimaxSmartPlugSimple
@@ -185,12 +176,12 @@ module.exports = (env) ->
     currentAmperage: 0.0;
 
     constructor: (@config, @plugin, lastState) ->
-      @on 'meteringData', ((values) ->
-        @_setAttribute('energyToday', values.day)
-        @_setAttribute('energyWeek', values.week)
-        @_setAttribute('energyMonth', values.month)
-        @_setAttribute('currentPower', values.nowPower)
-        @_setAttribute('currentAmperage', values.nowCurrent)
+      @on 'meteringData', ((values) =>
+        @base.setAttribute('energyToday', values.day)
+        @base.setAttribute('energyWeek', values.week)
+        @base.setAttribute('energyMonth', values.month)
+        @base.setAttribute('currentPower', values.nowPower)
+        @base.setAttribute('currentAmperage', values.nowCurrent)
       )
       super(@config, @plugin, lastState)
 

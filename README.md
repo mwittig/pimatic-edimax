@@ -15,8 +15,9 @@ Example of the device display as provided by the EdimaxSmartPlug
 Configuration
 -------------
 
-You can load the plugin by editing your `config.json` to include the following in the `plugins` section. The property `
-interval` specifies the time interval in seconds for polling the state information of the Smart Plugs.   
+You can load the plugin by editing your `config.json` to include the following in the `plugins` section. The property
+ `interval` specifies the time interval in seconds for polling the state information of the Smart Plugs. For debugging
+ purposes you can also set the property `debug`to `true`. For normal operation the latter is not recommended.
 
     { 
        "plugin": "edimax"
@@ -150,3 +151,6 @@ History
 * 20151004, V0.3.0
     * Fixed handling of plugin configuration default for interval
     * Fixed error handling of changeStateTo action. Return a rejected Promise with error message on error
+* 20151230, V0.3.1
+    * Added protocol debugging feature
+    * Refactoring. Now using pimatic-plugin-commons
