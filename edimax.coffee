@@ -66,7 +66,7 @@ module.exports = (env) ->
         if info.model is "SP2101W"
           @powerMeteringSupported = true
 
-        @_scheduleUpdate()
+        @_requestUpdate()
       )
 
     _modelInfoHandler: (id, options)->
@@ -76,23 +76,6 @@ module.exports = (env) ->
           #return Promise.reject error
           throw error
         )
-
-    # poll device according to interval
-    _scheduleUpdate: () ->
-      if typeof @intervalObject isnt 'undefined'
-        clearInterval(=>
-          @intervalObject
-        )
-
-      # keep updating
-      if @interval > 0
-        @intervalObject = setInterval(=>
-          @_requestUpdate()
-        , @interval
-        )
-
-      # perform an update now
-      @_requestUpdate()
 
     _requestUpdate: ->
       id = @id
@@ -109,7 +92,8 @@ module.exports = (env) ->
           @emit "meteringData", values
       ).catch((error) =>
         @base.error "Unable to get status values of device: " + error.toString()
-      )
+      ).finally () =>
+        @base.scheduleUpdate @_requestUpdate, @interval
 
     getState: () ->
       if @_state?
@@ -128,7 +112,7 @@ module.exports = (env) ->
       return @smartPlug.setSwitchState(state, @options).then(() =>
         @_setState(state)
         if @powerMeteringSupported
-          @_scheduleUpdate()
+          @base.scheduleUpdate @_requestUpdate, @interval
         return Promise.resolve()
       ).catch((error) =>
         errorMessage = "Unable to change switch state of device: " + error.toString()

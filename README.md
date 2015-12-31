@@ -154,3 +154,6 @@ History
 * 20151230, V0.3.1
     * Added protocol debugging feature
     * Refactoring. Now using pimatic-plugin-commons
+* 20151231, V0.3.2    
+    * Bug fix: Updated "edimax-smartplug" to include fix for issue #1
+    * Refactoring
