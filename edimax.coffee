@@ -112,7 +112,9 @@ module.exports = (env) ->
       return @smartPlug.setSwitchState(state, @options).then(() =>
         @_setState(state)
         if @powerMeteringSupported
-          @base.scheduleUpdate @_requestUpdate, @interval
+          @base.cancelUpdate()
+          @_requestUpdate()
+
         return Promise.resolve()
       ).catch((error) =>
         errorMessage = "Unable to change switch state of device: " + error.toString()
@@ -152,12 +154,12 @@ module.exports = (env) ->
         unit: 'A'
         acronym: 'AAC'
 
-    energyToday: lastState?.energyToday?.value or 0.0;
-    energyWeek: lastState?.energyWeek?.value or 0.0;
-    energyMonth: lastState?.energyMonth?.value or 0.0;
+    _energyToday: lastState?.energyToday?.value or 0.0;
+    _energyWeek: lastState?.energyWeek?.value or 0.0;
+    _energyMonth: lastState?.energyMonth?.value or 0.0;
     # it does not make much sense to recover current power and amperage from DB values
-    currentPower: 0.0;
-    currentAmperage: 0.0;
+    _currentPower: 0.0;
+    _currentAmperage: 0.0;
 
     constructor: (@config, @plugin, lastState) ->
       @on 'meteringData', ((values) =>
@@ -169,11 +171,11 @@ module.exports = (env) ->
       )
       super(@config, @plugin, lastState)
 
-    getEnergyToday: -> Promise.resolve @energyToday
-    getEnergyWeek: -> Promise.resolve @energyWeek
-    getEnergyMonth: -> Promise.resolve @energyMonth
-    getCurrentPower: -> Promise.resolve @currentPower
-    getCurrentAmperage: -> Promise.resolve @currentAmperage
+    getEnergyToday: -> Promise.resolve @_energyToday
+    getEnergyWeek: -> Promise.resolve @_energyWeek
+    getEnergyMonth: -> Promise.resolve @_energyMonth
+    getCurrentPower: -> Promise.resolve @_currentPower
+    getCurrentAmperage: -> Promise.resolve @_currentAmperage
 
 
   # ###Finally
