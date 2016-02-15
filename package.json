@@ -39,7 +39,7 @@
     "pimatic-plugin-commons": "^0.8.5"
   },
   "peerDependencies": {
-    "pimatic": ">0.8.19"
+    "pimatic": ">=0.8.100"
   },
   "engines": {
     "node": ">0.8.x",
