@@ -36,7 +36,7 @@
   "dependencies": {
     "bluebird-retry": ">=0.5.0",
     "edimax-smartplug": ">=0.0.10",
-    "pimatic-plugin-commons": "^0.8.5"
+    "pimatic-plugin-commons": "^0.8.7"
   },
   "peerDependencies": {
     "pimatic": ">0.8.19"
