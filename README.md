@@ -159,3 +159,6 @@ History
     * Refactoring
 * 20160106, V0.3.3    
     * Bug fix: Fixed handling of energy attributes to resolve issue #2
+* 20160305, V0.3.4    
+    * Dependency Updates
+    * Added travis build descriptor

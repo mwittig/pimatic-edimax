@@ -34,12 +34,12 @@
   "license": "GPL-2.0",
   "configSchema": "edimax-config-schema.coffee",
   "dependencies": {
-    "bluebird-retry": ">=0.5.0",
-    "edimax-smartplug": ">=0.0.11",
-    "pimatic-plugin-commons": "^0.8.5"
+    "bluebird-retry": "^0.5.3",
+    "edimax-smartplug": "^0.0.11",
+    "pimatic-plugin-commons": "^0.8.7"
   },
   "peerDependencies": {
-    "pimatic": ">0.8.19"
+    "pimatic": "0.8.*"
   },
   "engines": {
     "node": ">0.8.x",
