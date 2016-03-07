@@ -21,7 +21,7 @@ You can load the plugin by editing your `config.json` to include the following i
  purposes you can also set the property `debug`to `true`. For normal operation the latter is not recommended.
 
     { 
-       "plugin": "edimax"
+       "plugin": "edimax",
        "interval": 30
     }
     
