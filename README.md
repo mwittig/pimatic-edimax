@@ -163,3 +163,5 @@ History
 * 20160305, V0.3.4    
     * Dependency Updates
     * Added travis build descriptor
+* 20160312, V0.3.5
+    * Fixed typo in configuration example
