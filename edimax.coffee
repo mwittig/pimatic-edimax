@@ -9,43 +9,43 @@ module.exports = (env) ->
 
     init: (app, @framework, @config) =>
       deviceConfigDef = require("./device-config-schema")
-      if config.debug
+      if @config.debug
         process.env.EDIMAX_DEBUG=true
 
       @framework.deviceManager.registerDeviceClass("EdimaxSmartPlugSimple", {
         configDef: deviceConfigDef.EdimaxSmartPlugSimple,
-        createCallback: (config, lastState) =>
-          new EdimaxSmartPlugSimple(config, @, lastState)
+        createCallback: (@config, lastState) =>
+          new EdimaxSmartPlugSimple(@config, @, lastState)
       })
 
       @framework.deviceManager.registerDeviceClass("EdimaxSmartPlug", {
         configDef: deviceConfigDef.EdimaxSmartPlug,
-        createCallback: (config, lastState) =>
-          new EdimaxSmartPlug(config, @, lastState)
+        createCallback: (@config, lastState) =>
+          new EdimaxSmartPlug(@config, @, lastState)
       })
 
 
   class EdimaxSmartPlugSimple extends env.devices.PowerSwitch
     constructor: (@config, @plugin, lastState) ->
-      @name = config.name
-      @id = config.id
-      @debug = plugin.config.debug ? false
-      @base = commons.base @, config.class
+      @name = @config.name
+      @id = @config.id
+      @debug = @plugin.config.debug ? false
+      @base = commons.base @, @config.class
       @smartPlug = require 'edimax-smartplug'
 
 
-      intervalSeconds = (config.interval or (plugin.config.interval ? plugin.config.__proto__.interval))
+      intervalSeconds = (@config.interval or (@plugin.config.interval ? @plugin.config.__proto__.interval))
       @interval = 1000 * @base.normalize intervalSeconds, 10, 86400
       @options = {
         timeout: Math.min @interval, 10000
-        name: config.deviceName || config.name,
-        host: config.host,
-        username: config.username,
-        password: config.password,
+        name: @config.deviceName || @config.name,
+        host: @config.host,
+        username: @config.username,
+        password: @config.password,
         agent: false
       }
       @powerMeteringSupported = false
-      @recoverState = config.recoverState
+      @recoverState = @config.recoverState
 
       super()
       @_state = lastState?.state?.value or false;

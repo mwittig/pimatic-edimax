@@ -165,3 +165,6 @@ History
     * Added travis build descriptor
 * 20160312, V0.3.5
     * Fixed typo in configuration example
+* 20160322, V0.3.6
+    * Fixed compatibility issue with Coffeescript 1.9 as required for pimatic 0.9 (thanks @sweebee)
+    * Updated peerDependencies property for compatibility with pimatic 0.9
