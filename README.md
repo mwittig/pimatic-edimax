@@ -109,7 +109,6 @@ See [Release History](https://github.com/mwittig/pimatic-edimax/blob/master/HIST
 License 
 -------
 
-Copyright (c) 2015-2016, Marcus Wittig and contributors
-All rights reserved.
+Copyright (c) 2015-2016, Marcus Wittig and contributors. All rights reserved.
 
 [GPL-2.0](https://github.com/mwittig/pimatic-edimax/blob/master/LICENSE)
