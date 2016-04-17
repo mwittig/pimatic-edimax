@@ -68,3 +68,5 @@
     * Dependency Updates
     * Moved release history to separate file
     * Added license info to README
+* 20160xxx, V0.3.8
+    * Added destroy method to cancel an scheduled update when the device is removed or updated

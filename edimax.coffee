@@ -46,6 +46,7 @@ module.exports = (env) ->
       }
       @powerMeteringSupported = false
       @recoverState = @config.recoverState
+      @requestPromise = Promise.resolve();
 
       super()
       @_state = lastState?.state?.value or false;
@@ -56,9 +57,13 @@ module.exports = (env) ->
       , 500
       )
 
+    destroy: () ->
+      @base.cancelUpdate()
+      @requestPromise.cancel()
+      super()
 
     _requestModelInfo: =>
-      retry(@_modelInfoHandler(@id, @options),
+      @requestPromise = retry(@_modelInfoHandler(@id, @options),
         {max_tries: -1, max_interval: 30000, interval: 1000, backoff: 2}).done((info) =>
         env.logger.info(@options.name + '@' + @options.host + ': ' + info.vendor +
           " " + info.model + ", fwVersion: " + info.fwVersion + ", deviceId: " + @id)
@@ -71,7 +76,7 @@ module.exports = (env) ->
 
     _modelInfoHandler: (id, options)->
       return () =>
-        return @smartPlug.getDeviceInfo(options).catch((error) =>
+        @requestPromise = @smartPlug.getDeviceInfo(options).catch((error) =>
           @base.error "Unable to get model info of device: " + error.toString() + ", Retrying ..."
           #return Promise.reject error
           throw error
@@ -100,7 +105,7 @@ module.exports = (env) ->
         return Promise.resolve @_state
 
       id = @id
-      return @smartPlug.getSwitchState(@options).then((switchState) =>
+      @requestPromise =  @smartPlug.getSwitchState(@options).then((switchState) =>
         @_state = switchState
         return Promise.resolve @_state
       ).catch((error) =>
@@ -109,7 +114,7 @@ module.exports = (env) ->
 
     changeStateTo: (state) ->
       id = @id
-      return @smartPlug.setSwitchState(state, @options).then(() =>
+      @requestPromise = @smartPlug.setSwitchState(state, @options).then(() =>
         @_setState(state)
         if @powerMeteringSupported
           @base.cancelUpdate()
@@ -170,6 +175,9 @@ module.exports = (env) ->
         @base.setAttribute('currentAmperage', values.nowCurrent)
       )
       super(@config, @plugin, lastState)
+
+    destroy: () ->
+      super()
 
     getEnergyToday: -> Promise.resolve @_energyToday
     getEnergyWeek: -> Promise.resolve @_energyWeek
