@@ -4,7 +4,8 @@ module.exports = (env) ->
   types = env.require('decl-api').types
   retry = require 'bluebird-retry'
   commons = require('pimatic-plugin-commons')(env)
-  
+  os = require 'os'
+
   class EdimaxPlugin extends env.plugins.Plugin
 
     init: (app, @framework, @config) =>
@@ -23,6 +24,56 @@ module.exports = (env) ->
         createCallback: (@config, lastState) =>
           new EdimaxSmartPlug(@config, @, lastState)
       })
+
+      @framework.deviceManager.on('discover', (eventData) =>
+        interfaces = @listInterfaces()
+        smartPlug = require 'edimax-smartplug'
+
+        # ping all devices in each net:
+        interfaces.forEach( (iface, ifNum) =>
+          base = iface.address.match(/([0-9]+\.[0-9]+\.[0-9]+\.)[0-9]+/)[1]
+
+          @framework.deviceManager.discoverMessage(
+            'pimatic-edimax', "Scanning #{base}0/24"
+          )
+          smartPlug.discoverDevices({address: "#{base}#{255}"}).then (devices) =>
+            x = 0
+            for device in devices
+              if device.model in ['SP1101W', 'SP2101W']
+                displayName = if device.displayName is "" then "edimax" else device.displayName
+                config = {
+                  class: if device.model is 'SP2101W' then 'EdimaxSmartPlug' else 'EdimaxSmartPlugSimple',
+                  id: "#{displayName}-#{x++}"
+                  name:  "#{displayName}@#{device.addr}".replace(/\./g, '-')
+                  deviceName: displayName,
+                  host: device.addr
+                  interval: 30
+                }
+                @framework.deviceManager.discoveredDevice(
+                  'pimatic-edimax', "#{config.name}", config
+                )
+        )
+      )
+
+    # get all ip4 non local networks with /24 submask
+    listInterfaces : () ->
+      interfaces = []
+      ifaces = os.networkInterfaces()
+      Object.keys(ifaces).forEach( (ifname) ->
+        alias = 0
+        ifaces[ifname].forEach (iface) ->
+          if 'IPv4' isnt iface.family or iface.internal isnt false
+            # skip over internal (i.e. 127.0.0.1) and non-ipv4 addresses
+            return
+          if iface.netmask isnt "255.255.255.0"
+            return
+          interfaces.push {name: ifname, address: iface.address}
+        return
+      )
+      if interfaces.length is 0
+        # fallback to global broadcast
+        interfaces.push {name: '255.255.255.255/32', address: "255.255.255.255"}
+      return interfaces
 
 
   class EdimaxSmartPlugSimple extends env.devices.PowerSwitch
@@ -46,7 +97,7 @@ module.exports = (env) ->
       }
       @powerMeteringSupported = false
       @recoverState = @config.recoverState
-      @requestPromise = Promise.resolve();
+      @requestPromise = Promise.resolve()
 
       super()
       @_state = lastState?.state?.value or false;
@@ -66,7 +117,7 @@ module.exports = (env) ->
       @requestPromise = retry(@_modelInfoHandler(@id, @options),
         {max_tries: -1, max_interval: 30000, interval: 1000, backoff: 2}).done((info) =>
         env.logger.info(@options.name + '@' + @options.host + ': ' + info.vendor +
-          " " + info.model + ", fwVersion: " + info.fwVersion + ", deviceId: " + @id)
+            " " + info.model + ", fwVersion: " + info.fwVersion + ", deviceId: " + @id)
 
         if info.model is "SP2101W"
           @powerMeteringSupported = true
