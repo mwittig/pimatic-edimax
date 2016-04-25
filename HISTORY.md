@@ -68,5 +68,7 @@
     * Dependency Updates
     * Moved release history to separate file
     * Added license info to README
-* 20160xxx, V0.3.8
+* 20160425, V0.3.8
+    * Implemented device discovery for pimatic 0.9
     * Added destroy method to cancel an scheduled update when the device is removed or updated
+    * Dependency Updates
