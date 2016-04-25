@@ -110,7 +110,7 @@ module.exports = (env) ->
 
     destroy: () ->
       @base.cancelUpdate()
-      @requestPromise.cancel()
+      @requestPromise.cancel() if @requestPromise?
       super()
 
     _requestModelInfo: =>
