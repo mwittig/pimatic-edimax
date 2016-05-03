@@ -74,3 +74,6 @@
     * Dependency Updates
 * 20160503, V0.3.9
     * Bug Fix: Ensure discovery service will timeout if no results received
+* 20160503, V0.3.10
+    * Bug fix: Close discovery socket on error
+    * Improved error handling
