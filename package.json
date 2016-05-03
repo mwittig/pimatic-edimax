@@ -36,7 +36,7 @@
   "configSchema": "edimax-config-schema.coffee",
   "dependencies": {
     "bluebird-retry": "^0.6.1",
-    "edimax-smartplug": "^0.0.12",
+    "edimax-smartplug": "^0.0.13",
     "pimatic-plugin-commons": "^0.8.8"
   },
   "peerDependencies": {
