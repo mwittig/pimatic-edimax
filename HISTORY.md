@@ -72,3 +72,5 @@
     * Implemented device discovery for pimatic 0.9
     * Added destroy method to cancel an scheduled update when the device is removed or updated
     * Dependency Updates
+* 20160503, V0.3.9
+    * Bug Fix: Ensure discovery service will timeout if no results received
