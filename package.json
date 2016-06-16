@@ -35,7 +35,7 @@
   "license": "GPL-2.0",
   "configSchema": "edimax-config-schema.coffee",
   "dependencies": {
-    "bluebird-retry": "^0.6.1",
+    "bluebird-retry": "^0.7.0",
     "edimax-smartplug": "^0.0.14",
     "pimatic-plugin-commons": "^0.9.0"
   },
