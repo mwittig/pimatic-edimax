@@ -7,8 +7,9 @@ module.exports = (env) ->
   os = require 'os'
 
   class EdimaxPlugin extends env.plugins.Plugin
-
     init: (app, @framework, @config) =>
+      @debug = @config.debug ? false
+      @base = commons.base @, 'EdimaxPlugin'
       deviceConfigDef = require("./device-config-schema")
       if @config.debug
         process.env.EDIMAX_DEBUG=true
@@ -25,56 +26,58 @@ module.exports = (env) ->
           new EdimaxSmartPlug(@config, @, lastState)
       })
 
-      @framework.deviceManager.on('discover', (eventData) =>
-        interfaces = @listInterfaces()
+      @framework.deviceManager.on('discover', () =>
         smartPlug = require 'edimax-smartplug'
 
         # ping all devices in each net:
-        interfaces.forEach( (iface, ifNum) =>
-          base = iface.address.match(/([0-9]+\.[0-9]+\.[0-9]+\.)[0-9]+/)[1]
+        @enumerateNetworkInterfaces().forEach( (networkInterface) =>
+          basePart = networkInterface.address.match(/([0-9]+\.[0-9]+\.[0-9]+\.)[0-9]+/)[1]
 
           @framework.deviceManager.discoverMessage(
-            'pimatic-edimax', "Scanning #{base}0/24"
+            'pimatic-edimax', "Scanning #{basePart}0/24"
           )
-          smartPlug.discoverDevices({address: "#{base}#{255}"}).then (devices) =>
-            x = 0
+          smartPlug.discoverDevices({address: "#{basePart}#{255}"}).then (devices) =>
+            id = null
             for device in devices
               if device.model in ['SP1101W', 'SP2101W']
                 displayName = if device.displayName is "" then "edimax" else device.displayName
-                config = {
-                  class: if device.model is 'SP2101W' then 'EdimaxSmartPlug' else 'EdimaxSmartPlugSimple',
-                  id: "#{displayName}-#{x++}"
-                  name:  "#{displayName}@#{device.addr}".replace(/\./g, '-')
-                  deviceName: displayName,
+                id = @base.generateDeviceId @framework, displayName, id
+                config =
+                  class: if device.model is 'SP2101W' then 'EdimaxSmartPlug' else 'EdimaxSmartPlugSimple'
+                  id: id
+                  name:  "#{id}@#{device.addr}".replace(/\./g, '-')
+                  deviceName: displayName
                   host: device.addr
                   interval: 30
-                }
+
                 @framework.deviceManager.discoveredDevice(
-                  'pimatic-edimax', "#{config.name}", config
+                  'pimatic-edimax', config.name, config
                 )
         )
       )
 
     # get all ip4 non local networks with /24 submask
-    listInterfaces : () ->
-      interfaces = []
-      ifaces = os.networkInterfaces()
-      Object.keys(ifaces).forEach( (ifname) ->
-        alias = 0
-        ifaces[ifname].forEach (iface) ->
-          if 'IPv4' isnt iface.family or iface.internal isnt false
+    enumerateNetworkInterfaces: () ->
+      result = []
+      networkInterfaces = os.networkInterfaces()
+      Object.keys(networkInterfaces).forEach( (name) ->
+        networkInterfaces[name].forEach (networkInterface) ->
+          if 'IPv4' isnt networkInterface.family or networkInterface.internal isnt false
             # skip over internal (i.e. 127.0.0.1) and non-ipv4 addresses
             return
-          if iface.netmask isnt "255.255.255.0"
+          if networkInterface.netmask isnt "255.255.255.0"
             return
-          interfaces.push {name: ifname, address: iface.address}
+          result.push
+            name: name
+            address: networkInterface.address
         return
       )
-      if interfaces.length is 0
+      if result.length is 0
         # fallback to global broadcast
-        interfaces.push {name: '255.255.255.255/32', address: "255.255.255.255"}
-      return interfaces
-
+        result.push
+          name: '255.255.255.255/32'
+          address: '255.255.255.255'
+      return result
 
   class EdimaxSmartPlugSimple extends env.devices.PowerSwitch
     constructor: (@config, @plugin, lastState) ->
@@ -100,7 +103,7 @@ module.exports = (env) ->
       @requestPromise = Promise.resolve()
 
       super()
-      @_state = lastState?.state?.value or false;
+      @_state = lastState?.state?.value or false
       @__lastError = "INIT"
 
       setTimeout(=>
@@ -115,7 +118,7 @@ module.exports = (env) ->
 
     _requestModelInfo: =>
       @requestPromise = retry(@_modelInfoHandler(@id, @options),
-        {max_tries: -1, max_interval: 30000, interval: 1000, backoff: 2}).done((info) =>
+        {max_tries: -1, max_interval: 30000, interval: 1000, backoff: 2}).then((info) =>
         env.logger.info(@options.name + '@' + @options.host + ': ' + info.vendor +
             " " + info.model + ", fwVersion: " + info.fwVersion + ", deviceId: " + @id)
 
@@ -134,7 +137,6 @@ module.exports = (env) ->
         )
 
     _requestUpdate: ->
-      id = @id
       @smartPlug.getStatusValues(@powerMeteringSupported, @options).then((values) =>
         if @__lastError isnt "" and @recoverState
           @changeStateTo @_state
@@ -155,7 +157,6 @@ module.exports = (env) ->
       if @_state?
         return Promise.resolve @_state
 
-      id = @id
       @requestPromise =  @smartPlug.getSwitchState(@options).then((switchState) =>
         @_state = switchState
         return Promise.resolve @_state
@@ -164,7 +165,6 @@ module.exports = (env) ->
       )
 
     changeStateTo: (state) ->
-      id = @id
       @requestPromise = @smartPlug.setSwitchState(state, @options).then(() =>
         @_setState(state)
         if @powerMeteringSupported
@@ -210,12 +210,12 @@ module.exports = (env) ->
         unit: 'A'
         acronym: 'AAC'
 
-    _energyToday: lastState?.energyToday?.value or 0.0;
-    _energyWeek: lastState?.energyWeek?.value or 0.0;
-    _energyMonth: lastState?.energyMonth?.value or 0.0;
-    # it does not make much sense to recover current power and amperage from DB values
-    _currentPower: 0.0;
-    _currentAmperage: 0.0;
+    _energyToday: lastState?.energyToday?.value or 0.0
+    _energyWeek: lastState?.energyWeek?.value or 0.0
+    _energyMonth: lastState?.energyMonth?.value or 0.0
+# it does not make much sense to recover current power and amperage from DB values
+    _currentPower: 0.0
+    _currentAmperage: 0.0
 
     constructor: (@config, @plugin, lastState) ->
       @on 'meteringData', ((values) =>

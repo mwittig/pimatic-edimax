@@ -77,3 +77,6 @@
 * 20160503, V0.3.10
     * Bug fix: Close discovery socket on error
     * Improved error handling
+* 20160619, V0.3.11
+    * Improved device discovery generation of unique ids and names 
+    * Dependency Updates
