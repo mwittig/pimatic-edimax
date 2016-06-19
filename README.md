@@ -14,7 +14,7 @@ Example of the device display as provided by the EdimaxSmartPlug
 
 ![screenshot](https://raw.githubusercontent.com/mwittig/pimatic-edimax/master/screenshot-1.png)
 
-Configuration
+Plugin Configuration
 -------------
 
 You can load the plugin by editing your `config.json` to include the following in the `plugins` section. The property
@@ -23,13 +23,21 @@ You can load the plugin by editing your `config.json` to include the following i
 
     { 
        "plugin": "edimax",
+       "debug": false,
        "interval": 30
     }
     
-Then you need to add a Smart Plug device in the `devices` section. The plugin offers two device types:
+Device Configuration
+-------------
+
+    
+The plugin offers two device types:
                                                                    
 * EdimaxSmartPlugSimple: This type of device provides basic power switching capabilities (ON/OFF). 
 * EdimaxSmartPlug: This type of device additionally provides power metering suitable for Edimax SP-2101W.
+
+You can either use the device editor to manually a Smart Plug device, or you can use the **automatic device discovery** 
+function of pimatic to find smart plugs connected to your local network. 
 
 As part of the device definition you need to provide the `deviceName` and `password` which have been set using the 
 EdiPlug app provided by Edimax. Note, the `deviceName` refers to the `Name` field of the plug settings.
