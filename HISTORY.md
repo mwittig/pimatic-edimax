@@ -1,5 +1,7 @@
 # Release History
 
+* 20160831, V0.3.13
+    * Dependency Update: edimax-smartplug@0.0.15
 * 20160714, V0.3.12
     * Dependency Update which corrects handling of continuous attribute values
     * Reversed order of release history
