@@ -1,21 +1,19 @@
-pimatic-edimax
-=================
+# pimatic-edimax
+
 
 [![npm version](https://badge.fury.io/js/pimatic-edimax.svg)](http://badge.fury.io/js/pimatic-edimax)
 [![Build Status](https://travis-ci.org/mwittig/pimatic-edimax.svg?branch=master)](https://travis-ci.org/mwittig/pimatic-edimax)
 [![Dependency Status](https://david-dm.org/mwittig/pimatic-edimax.svg)](https://david-dm.org/mwittig/pimatic-edimax)
 
-Pimatic Plugin for Edimax WiFi Smart Plugs.
+Pimatic Plugin for Edimax WiFi SP-1101W and SP-2101W Smart Plugs. 
 
-Screenshot
--------------
+## Contributions
 
-Example of the device display as provided by the EdimaxSmartPlug
+If you like this plugin, please consider &#x2605; starring 
+[the project](https://github.com/mwittig/pimatic-edimax). Contributions to the project are  welcome. 
+You can simply fork the project and create a pull request with your contribution to start with. 
 
-![screenshot](https://raw.githubusercontent.com/mwittig/pimatic-edimax/master/screenshot-1.png)
-
-Plugin Configuration
--------------
+## Plugin Configuration
 
 You can load the plugin by editing your `config.json` to include the following in the `plugins` section. The property
  `interval` specifies the time interval in seconds for polling the state information of the Smart Plugs. For debugging
@@ -27,10 +25,11 @@ You can load the plugin by editing your `config.json` to include the following i
        "interval": 30
     }
     
-Device Configuration
--------------
+## Device Configuration
 
-    
+
+![screenshot](https://raw.githubusercontent.com/mwittig/pimatic-edimax/master/screenshot-1.png)
+
 The plugin offers two device types:
                                                                    
 * EdimaxSmartPlugSimple: This type of device provides basic power switching capabilities (ON/OFF). 
@@ -51,8 +50,7 @@ EdiPlug app provided by Edimax. Note, the `deviceName` refers to the `Name` fiel
       "password": "1234"
     }
        
-Advanced Configuration
--------------
+## Advanced Configuration
 
 ### Recover State
     
@@ -105,18 +103,12 @@ If you wish to hide the sparkline (the mini-graph) of the attribute display or e
         ]
     }
     
-TODO
-----
 
-* Investigate, whether or not it is possible to display and program switch schedules with pimatic
-
-History
--------
+## History
 
 See [Release History](https://github.com/mwittig/pimatic-edimax/blob/master/HISTORY.md).
 
-License 
--------
+## License 
 
 Copyright (c) 2015-2016, Marcus Wittig and contributors. All rights reserved.
 
