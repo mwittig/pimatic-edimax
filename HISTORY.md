@@ -1,5 +1,9 @@
 # Release History
 
+* 20161208, V0.3.14
+    * Dependency Update: edimax-smartplug@0.0.16 and pimatic-plugin-commons@0.9.3
+    * Node.js 0.10 is no longer supported
+    * Revised README
 * 20160831, V0.3.13
     * Dependency Update: edimax-smartplug@0.0.15
 * 20160714, V0.3.12
