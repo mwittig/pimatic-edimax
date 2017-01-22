@@ -1,5 +1,7 @@
 # Release History
 
+* 20160122, V0.3.15
+    * Added scheduledState to check current state according to program schedule (contributed by @mplessing)
 * 20161208, V0.3.14
     * Dependency Update: edimax-smartplug@0.0.16 and pimatic-plugin-commons@0.9.3
     * Node.js 0.10 is no longer supported
