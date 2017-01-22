@@ -113,7 +113,6 @@ module.exports = (env) ->
       @powerMeteringSupported = false
       @recoverState = @config.recoverState
       @requestPromise = Promise.resolve()
-      @scheduleState = false
 
       super()
       @_state = lastState?.state?.value or false
@@ -156,9 +155,8 @@ module.exports = (env) ->
         else
           if values.state isnt @_state
             @_setState(values.state)
-          if values.scheduleState isnt @scheduleState
-            @scheduleState = values.scheduleState
-            @base.setAttribute('scheduleState', values.scheduleState)
+
+          @base.setAttribute('scheduleState', values.scheduleState, true)
 
         @base.resetLastError()
 
@@ -194,10 +192,9 @@ module.exports = (env) ->
       )
 
     getScheduleState: () ->
-      @smartPlug.getScheduleState(@options).then((schedState) =>
-        @base.setAttribute('scheduleState', schedState)
-        @scheduleState = schedState
-        return Promise.resolve @scheduleState
+      @requestPromise = @smartPlug.getScheduleState(@options).then((scheduleState) =>
+        @base.setAttribute('scheduleState', scheduleState, true)
+        return Promise.resolve scheduleState
       ).catch((error) =>
         @base.error "Unable to get schedule state of device: " + error.toString()
       )
@@ -206,6 +203,15 @@ module.exports = (env) ->
   class EdimaxSmartPlug extends EdimaxSmartPlugSimple
     # attributes
     attributes:
+      state:
+        description: "Current State"
+        type: types.boolean
+        labels: ['on', 'off']
+      scheduleState:
+        description: "Current Schedule State"
+        type: types.boolean
+        labels: ['active', 'off']
+        acronym: 'Schedule'
       energyToday:
         description: "Energy Usage Today"
         type: types.number
