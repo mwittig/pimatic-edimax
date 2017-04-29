@@ -1,6 +1,10 @@
 # Release History
 
-* 20160122, V0.3.15
+* 20170429, V0.3.16
+    * Updated to edimax.smartplug@0.0.18 which supports digest authentication required with 
+      firmware versions SP-2101W v2.08 and SP-1101W v2.04
+    * Updated to pimatic-plugin-commons@0.9.4
+* 20170122, V0.3.15
     * Added scheduledState to check current state according to program schedule (contributed by @mplessing)
 * 20161208, V0.3.14
     * Dependency Update: edimax-smartplug@0.0.16 and pimatic-plugin-commons@0.9.3

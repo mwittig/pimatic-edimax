@@ -4,7 +4,8 @@
 [![npm version](https://badge.fury.io/js/pimatic-edimax.svg)](http://badge.fury.io/js/pimatic-edimax)
 [![Build Status](https://travis-ci.org/mwittig/pimatic-edimax.svg?branch=master)](https://travis-ci.org/mwittig/pimatic-edimax)
 [![Dependency Status](https://david-dm.org/mwittig/pimatic-edimax/status.svg)](https://david-dm.org/mwittig/pimatic-edimax)
-Pimatic Plugin for Edimax WiFi SP-1101W and SP-2101W Smart Plugs. 
+Pimatic Plugin for Edimax WiFi SP-1101W and SP-2101W Smart Plugs based on 
+ [edimax-smartplug](https://github.com/mwittig/edimax-smartplug). 
 
 ## Contributions
 
