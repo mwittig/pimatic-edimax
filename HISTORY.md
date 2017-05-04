@@ -1,5 +1,11 @@
 # Release History
 
+* 20170505, V0.3.17
+    * Fix for "Maximum call stack size exceeded" error if unable to connect to Smart Plug. Let 
+      getState and getScheduleState function reject on failure
+    * Updated dependencies
+    * Changed license to AGPL-3.0
+    
 * 20170429, V0.3.16
     * Updated to edimax.smartplug@0.0.18 which supports digest authentication required with 
       firmware versions SP-2101W v2.08 and SP-1101W v2.04
