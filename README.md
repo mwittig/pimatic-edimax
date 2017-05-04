@@ -1,5 +1,7 @@
 # pimatic-edimax
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/mwittig/pimatic-edimax.svg)](https://greenkeeper.io/)
+
 
 [![npm version](https://badge.fury.io/js/pimatic-edimax.svg)](http://badge.fury.io/js/pimatic-edimax)
 [![Build Status](https://travis-ci.org/mwittig/pimatic-edimax.svg?branch=master)](https://travis-ci.org/mwittig/pimatic-edimax)
