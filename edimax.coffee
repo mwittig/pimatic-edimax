@@ -176,6 +176,7 @@ module.exports = (env) ->
         return Promise.resolve @_state
       ).catch((error) =>
         @base.error "Unable to get switch state of device: " + error.toString()
+        Promise.reject error
       )
 
     changeStateTo: (state) ->
@@ -197,6 +198,7 @@ module.exports = (env) ->
         return Promise.resolve scheduleState
       ).catch((error) =>
         @base.error "Unable to get schedule state of device: " + error.toString()
+        Promise.reject error
       )
 
 
