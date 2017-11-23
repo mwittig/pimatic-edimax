@@ -35,7 +35,7 @@
   "license": "AGPL-3.0",
   "configSchema": "edimax-config-schema.coffee",
   "dependencies": {
-    "bluebird-retry": "^0.10.1",
+    "bluebird-retry": "^0.11.0",
     "edimax-smartplug": "^0.0.20",
     "pimatic-plugin-commons": "^0.9.5"
   },
