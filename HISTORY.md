@@ -1,5 +1,9 @@
 # Release History
 
+* 20171204, V0.3.18
+    * Updated dependencies
+    * README formatting changes
+
 * 20170505, V0.3.17
     * Fix for "Maximum call stack size exceeded" error if unable to connect to Smart Plug. Let 
       getState and getScheduleState function reject on failure
