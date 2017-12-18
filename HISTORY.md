@@ -1,5 +1,9 @@
 # Release History
 
+* 20171218, V0.3.19
+    * Updated dependencies
+    * Added incomaptibilty notice for EdiSmart firmware update
+    
 * 20171204, V0.3.18
     * Updated dependencies
     * README formatting changes
