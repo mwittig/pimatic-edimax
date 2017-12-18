@@ -7,6 +7,17 @@
 
 Pimatic Plugin for Edimax WiFi SP-1101W and SP-2101W Smart Plugs based on 
  [edimax-smartplug](https://github.com/mwittig/edimax-smartplug). 
+ 
+| Important Notice |
+|------------------|
+The recent firmware versions published for EdiSmart/Amazon Alexa Integration 
+are currently *not supported* by edimax-smartplug:
+* SP2101W: v2.09 and higher
+* SP1101W: v1.05 and higher
+
+If you have installed the new version and wish to downgrade you can use the 
+[downgrade guide](https://github.com/mwittig/edimax-smartplug/blob/master/Downgrade.md) provided 
+as part of the edimax-smartplug github project.
 
 ## Contributions
 
